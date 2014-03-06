@@ -1,0 +1,2 @@
+- Add lexer (use github.com/cznic/golex?).
+- Complete grammar.
