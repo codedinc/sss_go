@@ -4,25 +4,30 @@ package main
 import (
   "fmt"
 )
-
 %}
 
+%union{
+  value string
+}
+
 %token NUMBER
+%token SCOLON
+
+%type <value> NUMBER
 
 %%
 
 // Rules
 
 stylesheet:
-  /* empty */
   statements
 ;
 
 statements:
   statement
-| statements statement
+| statements SCOLON statement
 ;
 
 statement:
-  NUMBER
+  NUMBER                        { fmt.Printf("%#v\n", $1) }
 ;
