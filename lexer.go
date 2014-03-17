@@ -4,6 +4,7 @@ import (
   "bufio"
   "fmt"
   "regexp"
+  "io"
   "encoding/binary"
 )
 
@@ -12,7 +13,7 @@ type Lexer struct{
   current   string
 }
 
-func newLexer(reader *bufio.Reader) (lexer *Lexer) {
+func newLexer(reader io.Reader) (lexer *Lexer) {
   scanner := bufio.NewScanner(reader)
   scanner.Split(scan)
   return &Lexer{scanner: scanner}
@@ -40,9 +41,10 @@ func scan(data []byte, atEOF bool) (advance int, token []byte, err error) {
   }
 
   // Catch all remaining single char as token
-  tok := data[0:1]
+  tok := data[:1]
   return encodeToken(tok, int(tok[0]))
 }
+
 
 // Go's built-in Scanner only supports returning a token value. We need to
 // return a token type too. To get around this limitation, we encode the
@@ -53,19 +55,26 @@ func scan(data []byte, atEOF bool) (advance int, token []byte, err error) {
 // Token bytes format:
 // - First 3 byte: token type (int)
 // - Remaining bytes: token value (string)
+
+var tokTypeBytesLen = 3 // # of bytes to store the type when encoded in a []byte.
+
 func encodeToken(value []byte, tokenType int) (advance int, token []byte, err error) {
-  typeLen := 3 // 3 bytes to store the type
-  token = make([]byte, len(value) + typeLen)
-  binary.PutUvarint(token, uint64(tokenType))
+  token = make([]byte, len(value) + tokTypeBytesLen)
+  writenLen := binary.PutUvarint(token, uint64(tokenType))
+
+  if (writenLen > 3) {
+    panic(fmt.Sprintf("Encoding failed. Expected token type to be written to %v bytes, used %v bytes.",
+                      tokTypeBytesLen, writenLen))
+  }
   
-  copy(token[typeLen:], value)
+  copy(token[tokTypeBytesLen:], value)
 
   return len(value), token, nil
 }
 
 func decodeToken(buf []byte) (tokenType int, value string) {
-  val, len := binary.Uvarint(buf)
-  return int(val), string(buf[len:])
+  val, _ := binary.Uvarint(buf)
+  return int(val), string(buf[tokTypeBytesLen:])
 }
 
 
