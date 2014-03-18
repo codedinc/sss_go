@@ -7,7 +7,7 @@ import (
 
 func TestLexEOF(t *testing.T) {
   lexer := newLexerFromString("")
-  assertLexToToken(t, lexer, 0, "")
+  assertLexToToken(t, lexer, 0, "\x00")
 }
 
 func TestLexNumber(t *testing.T) {
@@ -19,7 +19,7 @@ func TestLexIgnoreSpaces(t *testing.T) {
   lexer := newLexerFromString("10 20 30")
   assertLexToToken(t, lexer, NUMBER, "10")
   assertLexToToken(t, lexer, NUMBER, "20")
-  // assertLexToToken(t, lexer, NUMBER, "30") FIXME: Fails the third time?
+  assertLexToToken(t, lexer, NUMBER, "30")
 }
 
 func TestLexIgnoreLineBreaks(t *testing.T) {
