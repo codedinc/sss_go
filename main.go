@@ -9,7 +9,8 @@ func main() {
   input, err := os.Open(os.Args[1])
   if err != nil { panic(err) }
 
-  yyParse(newLexer(bufio.NewReader(input)))
+  // yyDebug = 1
+  yyParse(NewLexer(bufio.NewReader(input)))
 
   input.Close()
 }

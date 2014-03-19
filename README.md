@@ -1,11 +1,8 @@
 # SSS ported to Go
 
+[SSS](https://github.com/codedinc/sss) project from [The Great Code Club](http://www.greatcodeclub.com/), ported to Go.
+
 * To get started on this project, first do steps 1 and 2 below if you don't have go or golex installed, then start on the usage
-
-## Usage
-
-    $ make
-    $ ./sss samples/plain.css
 
 ##Step 1 - How to Install Go
 
@@ -34,3 +31,9 @@ gvm install go1.2.1
 ```
 go get github.com/cznic/golex
 ```
+
+## Usage
+
+    $ go get
+    $ make
+    $ ./sss samples/plain.css

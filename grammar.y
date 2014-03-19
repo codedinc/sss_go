@@ -10,10 +10,11 @@ import (
   value string
 }
 
-%token NUMBER
-%token SCOLON
-
-%type <value> NUMBER
+%token <value> DIMENSION
+%token <value> NUMBER
+%token <value> COLOR
+%token <value> IDENTIFIER
+%token <value> SELECTOR
 
 %%
 
@@ -25,9 +26,10 @@ stylesheet:
 
 statements:
   statement
-| statements SCOLON statement
+| statements ';' statement
 ;
 
 statement:
-  NUMBER                        { fmt.Printf("%#v\n", $1) }
+  NUMBER                        { fmt.Printf("NUMBER: %q\n", $1) }
+| IDENTIFIER                    { fmt.Printf("IDENTIFIER: %q\n", $1) }
 ;

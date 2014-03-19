@@ -6,13 +6,10 @@ sss: $(GO_FILES)
 parser.go: grammar.y
 	go tool yacc -o $@ $^
 
-lexer.go: tokens.l
-	golex -o $@ $^
-
 test: sss *_test.go
 	go test
 
 clean:
-	rm -f sss parser.go lexer.go
+	rm -f sss parser.go
 
 .PHONY: clean test
