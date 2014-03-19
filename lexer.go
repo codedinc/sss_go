@@ -83,29 +83,42 @@ func (l *Lexer) Scan() bool {
   }
 }
 
-var spaceRegExp = regexp.MustCompile(`^\s+`)
-var numberRegExp = regexp.MustCompile(`^[0-9]+`)
-var identifierRegExp = regexp.MustCompile(`^[a-zA-Z][\w\-]*`)
+type lexerRule struct {
+  tokenType  int
+  regexp    *regexp.Regexp
+}
 
-func (l *Lexer) findToken(data []byte) (advance int, tok *Token) {
+var number   = `[0-9]+(\.[0-9]+)?`      // matches: 10 and 3.14
+var name     = `[a-zA-Z][\w\-]*`        // matches: body, background-color and myClassName
+var selector = `(\.|\#|\:\:|\:)` + name // matches: #id, .class, :hover and ::before
+
+var rules = []lexerRule{
+          // Token type   Regexp to match that token
+          // (-1 ignore)
+  lexerRule{ -1,          regexp.MustCompile(`^\s+`) },
+  lexerRule{ NUMBER,      regexp.MustCompile(`^` + number) },
+  lexerRule{ IDENTIFIER,  regexp.MustCompile(`^` + name) },
+}
+
+func (l *Lexer) findToken(data []byte) (advance int, token *Token) {
   var match []byte
 
-  if match = spaceRegExp.Find(data); match != nil {
-    // Skip spaces
-    return len(match), nil
-  } else if match = numberRegExp.Find(data); match != nil {
-    return token(NUMBER, match)
-  } else if match = identifierRegExp.Find(data); match != nil {
-    return token(IDENTIFIER, match)
+  // Apply each lexing rule until one matches
+  for _, rule := range rules {
+    match = rule.regexp.Find(data)
+
+    if match != nil {
+      token = nil
+      if (rule.tokenType != -1) {
+        token = &Token{rule.tokenType, string(match)}
+      }
+      return len(match), token
+    }
   }
 
   // Catch all remaining single char as token
   char := data[:1]
   return 1, &Token{int(char[0]), string(char)}
-}
-
-func token(kind int, value []byte) (advance int, tok *Token) {
-  return len(value), &Token{kind, string(value)}
 }
 
 
