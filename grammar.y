@@ -10,8 +10,11 @@ import (
   value string
 }
 
+%token <value> DIMENSION
 %token <value> NUMBER
+%token <value> COLOR
 %token <value> IDENTIFIER
+%token <value> SELECTOR
 
 %%
 

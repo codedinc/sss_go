@@ -10,7 +10,7 @@ func main() {
   if err != nil { panic(err) }
 
   // yyDebug = 1
-  yyParse(newLexer(bufio.NewReader(input)))
+  yyParse(NewLexer(bufio.NewReader(input)))
 
   input.Close()
 }

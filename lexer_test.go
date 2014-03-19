@@ -6,35 +6,47 @@ import (
 )
 
 func TestLexEOF(t *testing.T) {
-  lexer := newLexerFromString("")
+  lexer := NewLexerFromString("")
   assertLexToToken(t, lexer, 0, "\x00")
 }
 
 func TestLexNumber(t *testing.T) {
-  lexer := newLexerFromString("10")
+  lexer := NewLexerFromString("10")
   assertLexToToken(t, lexer, NUMBER, "10")
 }
 
+func TestLexDimension(t *testing.T) {
+  lexer := NewLexerFromString("10px")
+  assertLexToToken(t, lexer, DIMENSION, "10px")
+}
+
 func TestLexIgnoreSpaces(t *testing.T) {
-  lexer := newLexerFromString("10 20 30")
+  lexer := NewLexerFromString("10 20 30")
   assertLexToToken(t, lexer, NUMBER, "10")
   assertLexToToken(t, lexer, NUMBER, "20")
   assertLexToToken(t, lexer, NUMBER, "30")
 }
 
 func TestLexIgnoreLineBreaks(t *testing.T) {
-  lexer := newLexerFromString("10\n20")
+  lexer := NewLexerFromString("10\n20")
   assertLexToToken(t, lexer, NUMBER, "10")
   assertLexToToken(t, lexer, NUMBER, "20")
 }
 
 func TestLexIdentifier(t *testing.T) {
-  lexer := newLexerFromString("bold")
+  lexer := NewLexerFromString("bold")
   assertLexToToken(t, lexer, IDENTIFIER, "bold")
 }
 
+func TestLexSelector(t *testing.T) {
+  lexer := NewLexerFromString("#id .class a:hover")
+  assertLexToToken(t, lexer, SELECTOR, "#id")
+  assertLexToToken(t, lexer, SELECTOR, ".class")
+  assertLexToToken(t, lexer, SELECTOR, "a:hover")
+}
+
 func TestLexSingleChar(t *testing.T) {
-  lexer := newLexerFromString("{ }.")
+  lexer := NewLexerFromString("{ }.")
   assertLexToToken(t, lexer, int('{'), "{")
   assertLexToToken(t, lexer, int('}'), "}")
   assertLexToToken(t, lexer, int('.'), ".")
@@ -43,8 +55,8 @@ func TestLexSingleChar(t *testing.T) {
 
 // Helpers
 
-func newLexerFromString(input string) (*Lexer) {
-  return newLexer(strings.NewReader(input))
+func NewLexerFromString(input string) (*Lexer) {
+  return NewLexer(strings.NewReader(input))
 }
 
 func assertLexToToken(t *testing.T, lexer *Lexer, expectedType int, expectedValue string) {

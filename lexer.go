@@ -20,7 +20,34 @@ type Lexer struct {
   eof       bool
 }
 
-func newLexer(reader io.Reader) (lexer *Lexer) {
+type LexingRule struct {
+  tokenType  int
+  regexp    *regexp.Regexp
+}
+
+// Reusable regexp chunks (macros)
+var number   = `[0-9]+(\.[0-9]+)?`      // matches: 10 and 3.14
+var name     = `[a-zA-Z][\w\-]*`        // matches: body, background-color and myClassName
+var selector = `(\.|\#|\:\:|\:)` + name // matches: #id, .class, :hover and ::before
+
+// Define the lexing rules
+var rules = []LexingRule{
+          // Token type   Regexp to match that token
+          // (-1 ignore)
+  LexingRule{ -1,          regexp.MustCompile(`^\s+`) },
+  
+  LexingRule{ DIMENSION,   regexp.MustCompile(`^` + number + `(px|em|\%)`) },
+  LexingRule{ NUMBER,      regexp.MustCompile(`^` + number) },
+  LexingRule{ COLOR,       regexp.MustCompile(`^\#[0-9A-Fa-f]{3,6}`) },
+  
+  LexingRule{ SELECTOR,    regexp.MustCompile(`^` + selector) },
+  LexingRule{ SELECTOR,    regexp.MustCompile(`^` + name + selector) },
+  
+  LexingRule{ IDENTIFIER,  regexp.MustCompile(`^` + name) },
+}
+
+
+func NewLexer(reader io.Reader) (lexer *Lexer) {
   return &Lexer{
     reader: reader,
     buf:    make([]byte, 4096),
@@ -63,7 +90,7 @@ func (l *Lexer) Scan() bool {
 
   // Loop until we have a token.
   for {
-    advance, token := l.findToken(l.buf[l.start:l.end])
+    advance, token := l.applyRules(l.buf[l.start:l.end])
     
     l.start += advance
     l.token = token
@@ -83,24 +110,8 @@ func (l *Lexer) Scan() bool {
   }
 }
 
-type lexerRule struct {
-  tokenType  int
-  regexp    *regexp.Regexp
-}
-
-var number   = `[0-9]+(\.[0-9]+)?`      // matches: 10 and 3.14
-var name     = `[a-zA-Z][\w\-]*`        // matches: body, background-color and myClassName
-var selector = `(\.|\#|\:\:|\:)` + name // matches: #id, .class, :hover and ::before
-
-var rules = []lexerRule{
-          // Token type   Regexp to match that token
-          // (-1 ignore)
-  lexerRule{ -1,          regexp.MustCompile(`^\s+`) },
-  lexerRule{ NUMBER,      regexp.MustCompile(`^` + number) },
-  lexerRule{ IDENTIFIER,  regexp.MustCompile(`^` + name) },
-}
-
-func (l *Lexer) findToken(data []byte) (advance int, token *Token) {
+// Apply the lexing rules and return matched token.
+func (l *Lexer) applyRules(data []byte) (advance int, token *Token) {
   var match []byte
 
   // Apply each lexing rule until one matches
@@ -109,6 +120,7 @@ func (l *Lexer) findToken(data []byte) (advance int, token *Token) {
 
     if match != nil {
       token = nil
+      // tokenType of -1 means we ignore and do not emit a token.
       if (rule.tokenType != -1) {
         token = &Token{rule.tokenType, string(match)}
       }
