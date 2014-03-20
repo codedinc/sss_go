@@ -25,16 +25,28 @@ stylesheet:
 ;
 
 statements:
-  statement
-| statements ';' statement
+  selector_statement
+| selector_statement statements
 ;
 
-statement:
-  NUMBER                        { fmt.Printf("NUMBER: %q\n", $1) }
-| IDENTIFIER                    { fmt.Printf("IDENTIFIER: %q\n", $1) }
-| IDENTIFIER '{' statements '}' { fmt.Printf("IDENTIFIER: %q\n", $1) }
-| IDENTIFIER ':' IDENTIFIER     { fmt.Printf("IDENTIFIER: %q\n", $1) }
-| IDENTIFIER ':' DIMENSION      { fmt.Printf("IDENTIFIER: %q\n", $1) }
+selector_statement:
+  SELECTOR    '{' properties '}'   { fmt.Printf("SELECTOR: %q\n", $1) }
+| IDENTIFIER  '{' properties '}'   { fmt.Printf("IDENTIFIER: %q\n", $1) }
+;
+
+properties:
+  property
+| properties ';' property
+| properties ';'
+;
+
+property:
+  IDENTIFIER ':' IDENTIFIER     { fmt.Printf("IDENTIFIER: %q\n", $1) }
 | IDENTIFIER ':' COLOR          { fmt.Printf("IDENTIFIER: %q\n", $1) }
-| SELECTOR '{' statements '}'   { fmt.Printf("SELECTOR: %q\n", $1) }
+| IDENTIFIER ':' dimensions     { fmt.Printf("IDENTIFIER: %q\n", $1) }
+;
+
+dimensions:
+  DIMENSION
+| dimensions DIMENSION
 ;
