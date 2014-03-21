@@ -1,15 +1,15 @@
 package main
 
 type StyleSheet struct {
-  rules []Rule
+	rules []Rule
 }
 
 type Rule struct {
-  selector string
-  properties []Property
+	selector   string
+	properties []Property
 }
 
 type Property struct {
-  name string
-  value string
+	name  string
+	value string
 }
