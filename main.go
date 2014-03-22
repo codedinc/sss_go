@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"os"
+  "fmt"
 )
 
 func main() {
@@ -12,7 +13,9 @@ func main() {
 	}
 
 	// yyDebug = 1
-	yyParse(NewLexer(bufio.NewReader(input)))
+  lexer := NewLexer(bufio.NewReader(input))
+	yyParse(lexer)
+  fmt.Printf("%v\n", lexer.output)
 
 	input.Close()
 }

@@ -1,13 +1,15 @@
 %{
 package main
-
-import (
-  "fmt"
-)
 %}
 
 %union{
-  value string
+  value      string
+  values     []string
+  node       Node
+  rule       Rule
+  rules      []Rule
+  property   Property
+  properties []Property
 }
 
 %token <value> DIMENSION
@@ -16,37 +18,55 @@ import (
 %token <value> IDENTIFIER
 %token <value> SELECTOR
 
+// Declare return value (in %union) type of rules
+%type <node> stylesheet
+%type <rules> rules
+%type <rule> rule
+%type <properties> properties
+%type <property> property
+%type <value> selector value
+%type <values> values
+
 %%
 
 // Rules
 
-stylesheet:
-  statements
+stylesheet:                         // HACK go yacc can't return a custom value. We store it in the lexer instead.
+                                    // https://groups.google.com/forum/#!topic/golang-dev/nemcZF_KyYg
+  rules                             { yylex.(*Lexer).output = StyleSheet{$1} }
 ;
 
-statements:
-  selector_statement
-| selector_statement statements
+rules:
+  rule                              { $$ = []Rule{$1} }
+| rules rule                        { $$ = append($1, $2) }
 ;
 
-selector_statement:
-  SELECTOR    '{' properties '}'   { fmt.Printf("SELECTOR: %q\n", $1) }
-| IDENTIFIER  '{' properties '}'   { fmt.Printf("IDENTIFIER: %q\n", $1) }
+rule:
+  selector '{' properties '}'       { $$ = Rule{$1, $3} }
+;
+
+selector:
+  SELECTOR
+| IDENTIFIER
 ;
 
 properties:
-  property
-| properties ';' property
-| properties ';'
+  property                          { $$ = []Property{$1} }
+| properties ';' property           { $$ = append($1, $3) }
+| properties ';'                    { $$ = $1 }
 ;
 
 property:
-  IDENTIFIER ':' IDENTIFIER     { fmt.Printf("IDENTIFIER: %q\n", $1) }
-| IDENTIFIER ':' COLOR          { fmt.Printf("IDENTIFIER: %q\n", $1) }
-| IDENTIFIER ':' dimensions     { fmt.Printf("IDENTIFIER: %q\n", $1) }
+  IDENTIFIER ':' values             { $$ = Property{$1, $3} }
 ;
 
-dimensions:
-  DIMENSION
-| dimensions DIMENSION
+values:
+  value                             { $$ = []string{$1} }
+| values value                      { $$ = append($1, $2) }
+;
+
+value:
+  IDENTIFIER
+| DIMENSION
+| COLOR
 ;
