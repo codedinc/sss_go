@@ -1,6 +1,6 @@
 package main
 
-type Node interface {}
+type Node interface{}
 
 type StyleSheet struct {
 	rules []Rule
