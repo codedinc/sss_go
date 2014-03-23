@@ -19,8 +19,6 @@ func main() {
 		return
 	}
 
-	// yyDebug = 1
-	lexer := NewLexer(bufio.NewReader(input))
-	yyParse(lexer)
-	fmt.Printf("%v\n", lexer.output)
+	node := Parse(bufio.NewReader(input))
+	fmt.Printf("%v\n", node)
 }

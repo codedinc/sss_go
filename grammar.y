@@ -1,5 +1,9 @@
 %{
 package main
+
+import (
+  "io"
+)
 %}
 
 %union{
@@ -68,3 +72,13 @@ value:
 | DIMENSION
 | COLOR
 ;
+
+%%
+
+func Parse(reader io.Reader) Node {
+  // yyDebug = 1
+  lexer := NewLexer(reader)
+  yyParse(lexer)
+  return lexer.output
+
+}
