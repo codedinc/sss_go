@@ -5,11 +5,10 @@ package main
 %union{
   value      string
   values     []string
-  node       Node
-  rule       Rule
-  rules      []Rule
-  property   Property
-  properties []Property
+  rule       *Rule
+  rules      []*Rule
+  property   *Property
+  properties []*Property
 }
 
 %token <value> DIMENSION
@@ -19,7 +18,6 @@ package main
 %token <value> SELECTOR
 
 // Declare return value (in %union) type of rules
-%type <node> stylesheet
 %type <rules> rules
 %type <rule> rule
 %type <properties> properties
@@ -33,16 +31,16 @@ package main
 
 stylesheet:                         // HACK go yacc can't return a custom value. We store it in the lexer instead.
                                     // https://groups.google.com/forum/#!topic/golang-dev/nemcZF_KyYg
-  rules                             { yylex.(*Lexer).output = StyleSheet{$1} }
+  rules                             { yylex.(*Lexer).output = &StyleSheet{$1} }
 ;
 
 rules:
-  rule                              { $$ = []Rule{$1} }
+  rule                              { $$ = []*Rule{$1} }
 | rules rule                        { $$ = append($1, $2) }
 ;
 
 rule:
-  selector '{' properties '}'       { $$ = Rule{$1, $3} }
+  selector '{' properties '}'       { $$ = &Rule{$1, $3} }
 ;
 
 selector:
@@ -51,13 +49,13 @@ selector:
 ;
 
 properties:
-  property                          { $$ = []Property{$1} }
+  property                          { $$ = []*Property{$1} }
 | properties ';' property           { $$ = append($1, $3) }
 | properties ';'                    { $$ = $1 }
 ;
 
 property:
-  IDENTIFIER ':' values             { $$ = Property{$1, $3} }
+  IDENTIFIER ':' values             { $$ = &Property{$1, $3} }
 ;
 
 values:

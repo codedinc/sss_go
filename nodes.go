@@ -1,14 +1,16 @@
 package main
 
-type Node interface{}
+type Node interface {
+	//ToCSS() string
+}
 
 type StyleSheet struct {
-	rules []Rule
+	rules []*Rule
 }
 
 type Rule struct {
 	selector   string
-	properties []Property
+	properties []*Property
 }
 
 type Property struct {
