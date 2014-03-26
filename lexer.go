@@ -18,7 +18,7 @@ type Lexer struct {
 	start  int
 	end    int
 	eof    bool
-	output Node
+	output *StyleSheet
 }
 
 type LexingRule struct {

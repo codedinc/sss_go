@@ -3,8 +3,20 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 )
+
+func Compile(input io.Reader) string {
+	styleSheet := Parse(bufio.NewReader(input))
+	return styleSheet.ToCSS()
+}
+
+func CompileString(input string) string {
+	styleSheet := Parse(strings.NewReader(input))
+	return styleSheet.ToCSS()
+}
 
 func main() {
 	if len(os.Args) < 2 {
@@ -19,6 +31,6 @@ func main() {
 		return
 	}
 
-	node := Parse(bufio.NewReader(input))
-	fmt.Printf("%v\n", node)
+	styleSheet := Parse(bufio.NewReader(input))
+	fmt.Printf("%v\n", styleSheet.ToCSS())
 }

@@ -75,10 +75,9 @@ value:
 
 %%
 
-func Parse(reader io.Reader) Node {
+func Parse(reader io.Reader) *StyleSheet {
   // yyDebug = 1
   lexer := NewLexer(reader)
   yyParse(lexer)
   return lexer.output
-
 }
