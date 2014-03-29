@@ -75,7 +75,7 @@ value:
   IDENTIFIER                        { $$ = &Literal{$1}  }
 | DIMENSION                         { $$ = &Literal{$1}  }
 | COLOR                             { $$ = &Literal{$1}  }
-| VARIABLE                          { $$ = $Variable{$1} }
+| VARIABLE                          { $$ = &Variable{$1} }
 ;
 
 %%
