@@ -141,7 +141,7 @@ func (l *Lexer) Error(e string) {
 
 func (l *Lexer) Lex(lval *yySymType) int {
 	if l.Scan() {
-		lval.value = l.token.value
+		lval.string = l.token.value
 
 		return l.token.kind
 	}

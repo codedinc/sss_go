@@ -7,26 +7,29 @@ import (
 %}
 
 %union{
-  value      string
-  values     []string
+  string     string
+  strings    []string
+  value      Value
+  values     []Value
   rule       *Rule
   rules      []*Rule
   property   *Property
   properties []*Property
 }
 
-%token <value> DIMENSION
-%token <value> NUMBER
-%token <value> COLOR
-%token <value> IDENTIFIER
-%token <value> SELECTOR
+%token <string> DIMENSION
+%token <string> NUMBER
+%token <string> COLOR
+%token <string> IDENTIFIER
+%token <string> SELECTOR
 
 // Declare return value (in %union) type of rules
 %type <rules> rules
 %type <rule> rule
 %type <properties> properties
 %type <property> property
-%type <value> selector value
+%type <string> selector
+%type <value> value
 %type <values> values
 
 %%
@@ -63,14 +66,14 @@ property:
 ;
 
 values:
-  value                             { $$ = []string{$1} }
+  value                             { $$ = []Value{$1} }
 | values value                      { $$ = append($1, $2) }
 ;
 
 value:
-  IDENTIFIER
-| DIMENSION
-| COLOR
+  IDENTIFIER                        { $$ = &Literal{$1} }
+| DIMENSION                         { $$ = &Literal{$1} }
+| COLOR                             { $$ = &Literal{$1} }
 ;
 
 %%

@@ -3,7 +3,8 @@ package main
 import "testing"
 
 func TestBuildNodes(t *testing.T) {
-	property := Property{"color", []string{"#fff"}}
+	value := Literal{"#fff"}
+	property := Property{"color", []Value{&value}}
 	rule := Rule{"h1", []*Property{&property}}
 	styleSheet := StyleSheet{[]*Rule{&rule}}
 

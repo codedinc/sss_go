@@ -66,7 +66,7 @@ func assertLexToToken(t *testing.T, lexer *Lexer, expectedType int, expectedValu
 		t.Errorf("Bad token type. Got %v, expected %v", tokType, expectedType)
 	}
 
-	if lval.value != expectedValue {
-		t.Errorf("Bad token value. Got %q, expected %q", lval.value, expectedValue)
+	if lval.string != expectedValue {
+		t.Errorf("Bad token value. Got %q, expected %q", lval.string, expectedValue)
 	}
 }

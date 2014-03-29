@@ -35,14 +35,27 @@ func (self *Rule) ToCSS(buf *bytes.Buffer) {
 
 type Property struct {
 	name   string
-	values []string
+	values []Value
 }
 
 func (self *Property) ToCSS(buf *bytes.Buffer) {
 	buf.WriteString(self.name)
 	buf.WriteString(": ")
 	for _, value := range self.values {
-		buf.WriteString(value)
+		value.ToCSS(buf)
 	}
+	return
+}
+
+type Value interface {
+	ToCSS(buf *bytes.Buffer)
+}
+
+type Literal struct {
+	value string
+}
+
+func (self *Literal) ToCSS(buf *bytes.Buffer) {
+	buf.WriteString(self.value)
 	return
 }
