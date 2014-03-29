@@ -55,6 +55,11 @@ type Literal struct {
 	value string
 }
 
+type Variable struct {
+	name string
+	//What goes here Value or Literal?
+}
+
 func (self *Literal) ToCSS(buf *bytes.Buffer) {
 	buf.WriteString(self.value)
 	return

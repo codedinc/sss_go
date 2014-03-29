@@ -22,6 +22,7 @@ import (
 %token <string> COLOR
 %token <string> IDENTIFIER
 %token <string> SELECTOR
+%token <string> VARIABLE
 
 // Declare return value (in %union) type of rules
 %type <rules> rules
@@ -71,9 +72,10 @@ values:
 ;
 
 value:
-  IDENTIFIER                        { $$ = &Literal{$1} }
-| DIMENSION                         { $$ = &Literal{$1} }
-| COLOR                             { $$ = &Literal{$1} }
+  IDENTIFIER                        { $$ = &Literal{$1}  }
+| DIMENSION                         { $$ = &Literal{$1}  }
+| COLOR                             { $$ = &Literal{$1}  }
+| VARIABLE                          { $$ = $Variable{$1} }
 ;
 
 %%

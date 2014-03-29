@@ -30,6 +30,7 @@ type LexingRule struct {
 var number = `[0-9]+(\.[0-9]+)?`        // matches: 10 and 3.14
 var name = `[a-zA-Z][\w\-]*`            // matches: body, background-color and myClassName
 var selector = `(\.|\#|\:\:|\:)` + name // matches: #id, .class, :hover and ::before
+var variable = `\@` + name              // matches: @font, @banner-color
 
 // Define the lexing rules
 var rules = []LexingRule{
@@ -44,6 +45,7 @@ var rules = []LexingRule{
 	LexingRule{SELECTOR, regexp.MustCompile(`^` + selector)},
 	LexingRule{SELECTOR, regexp.MustCompile(`^` + name + selector)},
 
+	LexingRule{VARIABLE, regexp.MustCompile(`^` + variable)},
 	LexingRule{IDENTIFIER, regexp.MustCompile(`^` + name)},
 }
 
