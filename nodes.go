@@ -60,6 +60,11 @@ type Variable struct {
 	//What goes here Value or Literal?
 }
 
+func (self *Variable) ToCSS(buf *bytes.Buffer) {
+	//Dummy function
+	return
+}
+
 func (self *Literal) ToCSS(buf *bytes.Buffer) {
 	buf.WriteString(self.value)
 	return
