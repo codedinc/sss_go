@@ -17,8 +17,8 @@ func (self *StyleSheet) ToCSS() string {
 }
 
 type Rule struct {
-	selector   string
-	properties []*Property
+	selector string
+	values   []Value
 }
 
 func (self *Rule) ToCSS(buf *bytes.Buffer) {

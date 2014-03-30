@@ -13,7 +13,7 @@ import (
   values     []Value
   rule       *Rule
   rules      []*Rule
-  property   *Property
+  declaration   *Property
   declarations []*Property
 }
 
@@ -58,7 +58,7 @@ selector:
 ;
 
 declarations:
-  declaration                         { $$ = []*Property{$1} }
+  declaration                         { $$ = []Value{$1} }
 | declarations ';' property           { $$ = append($1, $3) }
 | declarations ';'                    { $$ = $1 }
 ;
