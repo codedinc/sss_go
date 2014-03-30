@@ -55,17 +55,30 @@ type Literal struct {
 	value string
 }
 
-type Variable struct {
-	name string
-	//What goes here Value or Literal?
-}
-
-func (self *Variable) ToCSS(buf *bytes.Buffer) {
-	//Dummy function
+func (self *Literal) ToCSS(buf *bytes.Buffer) {
+	buf.WriteString(self.value)
 	return
 }
 
-func (self *Literal) ToCSS(buf *bytes.Buffer) {
-	buf.WriteString(self.value)
+type Variable struct {
+	name string
+}
+
+func (self *Variable) ToCSS(buf *bytes.Buffer) {
+	buf.WriteString(self.name)
+	return
+}
+
+type Assign struct {
+	name   string
+	values []Value
+}
+
+func (self *Assign) ToCSS(buf *bytes.Buffer) {
+	buf.WriteString(self.name)
+	buf.WriteString(": ")
+	for _, value := range self.values {
+		value.ToCSS(buf)
+	}
 	return
 }

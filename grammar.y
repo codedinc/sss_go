@@ -14,7 +14,7 @@ import (
   rule       *Rule
   rules      []*Rule
   property   *Property
-  properties []*Property
+  declarations []*Property
 }
 
 %token <string> DIMENSION
@@ -27,7 +27,7 @@ import (
 // Declare return value (in %union) type of rules
 %type <rules> rules
 %type <rule> rule
-%type <properties> properties
+%type <declarations> declarations
 %type <property> property
 %type <string> selector
 %type <value> value
@@ -48,7 +48,7 @@ rules:
 ;
 
 rule:
-  selector '{' properties '}'       { $$ = &Rule{$1, $3} }
+  selector '{' declarations '}'       { $$ = &Rule{$1, $3} }
 ;
 
 selector:
@@ -56,10 +56,16 @@ selector:
 | IDENTIFIER
 ;
 
-properties:
-  property                          { $$ = []*Property{$1} }
-| properties ';' property           { $$ = append($1, $3) }
-| properties ';'                    { $$ = $1 }
+declarations:
+  property                            { $$ = []*Property{$1} }
+| declarations ';' property           { $$ = append($1, $3) }
+| declarations ';'                    { $$ = $1 }
+| declaration                         { $$ = []Valye{$1} }
+;
+
+declaration:
+  variableDeclaration
+| property
 ;
 
 property:
@@ -77,6 +83,11 @@ value:
 | COLOR                             { $$ = &Literal{$1}  }
 | VARIABLE                          { $$ = &Variable{$1} }
 ;
+
+variableDeclaration:
+  VARIABLE ':' values               { $$ = &Assign($1, $3) }
+;
+
 
 %%
 
