@@ -13,8 +13,8 @@ import (
   values     []Value
   rule       *Rule
   rules      []*Rule
-  declaration   *Property
-  declarations []*Property
+  declaration   Value
+  declarations []Value
 }
 
 %token <string> DIMENSION
