@@ -27,6 +27,7 @@ import (
 // Declare return value (in %union) type of rules
 %type <rules> rules
 %type <rule> rule
+%type <declaration> declaration
 %type <declarations> declarations
 %type <property> property
 %type <string> selector
@@ -57,15 +58,14 @@ selector:
 ;
 
 declarations:
-  property                            { $$ = []*Property{$1} }
+  declaration                         { $$ = []*Property{$1} }
 | declarations ';' property           { $$ = append($1, $3) }
 | declarations ';'                    { $$ = $1 }
-| declaration                         { $$ = []Value{$1} }
 ;
 
 declaration:
-  variableDeclaration
-| property
+  property
+|  variableDeclaration
 ;
 
 property:
