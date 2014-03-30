@@ -60,7 +60,7 @@ declarations:
   property                            { $$ = []*Property{$1} }
 | declarations ';' property           { $$ = append($1, $3) }
 | declarations ';'                    { $$ = $1 }
-| declaration                         { $$ = []Valye{$1} }
+| declaration                         { $$ = []Value{$1} }
 ;
 
 declaration:
